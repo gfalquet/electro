@@ -1,0 +1,72 @@
+<html>
+<head>
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="jquery.jqplot.min.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery.jqplot.css" />
+</head>
+<body>
+
+<div id="chartdiv" style="height:400px;width:600px; "></div>
+<div style="text-align: center; width: 600px;">
+   <div id="winst" style="font-size: 48px; font-family: Helvetica;">---</div>
+</div> 
+
+<script type="text/javascript">
+
+var gloc = 0;
+var tt = 0;
+var w = 0;
+var datx=[];
+
+// for (var i=0; i<100; i++) { datx.push([i, 300]); }
+
+var plot1 = null;
+
+                    
+setInterval(function(){
+  $.getJSON( "/adc/watts.json",
+    function( datap ) {
+        tt++;
+
+        w = Math.round(datap[0]);
+                console.log("getJSON" +w);
+
+        if (tt == 1) {// first time 
+            for (tt=1; tt<=100; tt++) { datx.push([tt, w]); }
+            plot1 = $.jqplot('chartdiv',  [datx], 
+                    {seriesDefaults: {lineWidth: 2.0, shadow: false, showMarker: false},
+                     axes: { yaxis: {min: 0, max: 3000}, xaxis: {min: 0, max: 200},
+                     animateReplot : true}
+                     } );
+        } 
+        else {
+                
+          datx.splice(0, 1);
+          datx.push([tt, w]);
+
+          plot1.series[0].data = datx;
+        //plot1.axes.xaxis.min = tt-100;     
+        //plot1.axes.xaxis.max = tt;
+//          plot1.resetAxesScale();       
+//        plot1.axes.xaxis.numberTicks = 10;
+//        plot1.axes.y2axis.numberTicks = 15;
+          plot1.replot();
+        }
+        document.getElementById("winst").innerHTML = w;
+        
+        //document.getElementById("ttt").innerHTML = gloc + "..." + w + " datx " + datx;
+
+
+  });
+
+   var d = new Date();
+   var n = d.getTime(); 
+ 
+ 
+ }, 2000);
+
+</script>
+
+</body>
+</html>

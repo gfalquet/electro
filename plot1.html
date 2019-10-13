@@ -1,0 +1,42 @@
+<html>
+<head>
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="excanvas.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="jquery.jqplot.min.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery.jqplot.css" />
+</head>
+<body>
+
+<div id="chartdiv" style="height:400px;width:3200px; "></div>
+
+<script type="text/javascript">
+
+(function() {
+  $.getJSON( "edata.json")
+    .done(function( data ) {  
+        var datx=[];
+        for (var i=0; i<data.length; i++) {
+           var d = [];
+           var t = new Date(data[i]["t"]*1000);
+           d[0]=t.getHours()+t.getMinutes()/60+t.getSeconds()/3600; 
+           d[1]=data[i]["w"];
+           datx[i]=d;
+        }      
+        $.jqplot('chartdiv',  [datx], 
+                    {seriesDefaults: {lineWidth: 1.0, shadow: false, showMarker: false}});
+      
+    }) // done arg.
+    .fail(function() {
+    console.log( "error" );
+    })
+    .always(function() {
+    console.log( "complete" );
+  });
+}); // (function
+
+
+
+</script>
+
+</body>
+</html>
